@@ -4,8 +4,11 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -21,7 +24,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.sp
 import com.bsewamods.diceroller.ui.theme.DiceRollerTheme
 
 class MainActivity : ComponentActivity() {
@@ -36,6 +38,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     DiceRollerApp()
                 }
+
             }
         }
     }
@@ -43,7 +46,7 @@ class MainActivity : ComponentActivity() {
 
 @Preview
 @Composable
-fun DiceRollerApp() {
+fun DiceRollerApp(){
     DiceWithButtonAndImage(modifier = Modifier
         .fillMaxSize()
         .wrapContentSize(Alignment.Center)
@@ -52,22 +55,31 @@ fun DiceRollerApp() {
 
 @Composable
 fun DiceWithButtonAndImage(modifier: Modifier = Modifier) {
-    var result by remember { mutableStateOf(1)}
-    val imageResource = when(result) {
+    var dado1 by remember { mutableStateOf(1)}
+    var dado2 by remember { mutableStateOf(1)}
+    Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            Image(painter = painterResource(getRandomDiceImage(dado1)), contentDescription = dado1.toString())
+            Image(painter = painterResource(getRandomDiceImage(dado2)), contentDescription = dado2.toString())
+        }
+        Button(
+            onClick = {
+                dado1 = (1..6).random()
+                dado2 = (1..6).random()
+            }
+        ) {
+            Text(stringResource(R.string.roll))
+        }
+    }
+}
+
+private fun getRandomDiceImage(resultado: Int): Int {
+    return when (resultado){
         1 -> R.drawable.dice_1
         2 -> R.drawable.dice_2
         3 -> R.drawable.dice_3
         4 -> R.drawable.dice_4
         5 -> R.drawable.dice_5
         else -> R.drawable.dice_6
-    }
-    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-        Image(painter = painterResource(imageResource), contentDescription = result.toString())
-
-        Button(
-            onClick = { result = (1..6).random() },
-        ) {
-            Text(text = stringResource(R.string.roll), fontSize = 24.sp)
-        }
     }
 }
